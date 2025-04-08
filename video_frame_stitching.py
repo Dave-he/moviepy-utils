@@ -8,6 +8,16 @@ logging.getLogger("imageio").setLevel(logging.ERROR)
 # 全局禁止 FFmpeg 日志（在脚本开头添加）
 os.environ["IMAGEIO_FFMPEG_LOG_LEVEL"] = "error"  # 可选值：'debug', 'info', 'warn', 'error', 'quiet'
 
+from contextlib import redirect_stdout
+
+# 禁用 Python 标准输出（针对 print 语句）
+def suppress_output(func):
+    def wrapper(*args, **kwargs):
+        with open(os.devnull, 'w') as f, redirect_stdout(f):
+            return func(*args, **kwargs)
+    return wrapper
+
+
 def stitch_frames(frames):
     """
     将9帧图像拼接成一张图像
@@ -25,7 +35,7 @@ def stitch_frames(frames):
             stitched_image[i * height:(i + 1) * height, j * width:(j + 1) * width] = frames[index]
     return stitched_image
 
-
+@suppress_output
 def process_video(input_path, output_path):
     """
     处理视频，将每一帧替换为前4帧+本帧+后4帧拼接的图像~
