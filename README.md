@@ -8,5 +8,5 @@ pip install moviepy
 '''
 
 ## 功能
-video_frame_stitching.py 视频一帧转9帧
+video_frame_stitching.py 将视频9帧拼接为一帧。（占用内存过大，不建议使用）
 

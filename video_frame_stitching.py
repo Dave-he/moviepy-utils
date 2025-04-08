@@ -1,7 +1,12 @@
-import cv2
+import os
 import numpy as np
 from moviepy import VideoFileClip, ImageSequenceClip
-
+import logging
+# 设置 moviepy 的日志级别为 ERROR，只在出现错误时打印日志
+logging.getLogger("moviepy").setLevel(logging.ERROR)
+logging.getLogger("imageio").setLevel(logging.ERROR)
+# 全局禁止 FFmpeg 日志（在脚本开头添加）
+os.environ["IMAGEIO_FFMPEG_LOG_LEVEL"] = "error"  # 可选值：'debug', 'info', 'warn', 'error', 'quiet'
 
 def stitch_frames(frames):
     """
@@ -53,11 +58,12 @@ def process_video(input_path, output_path):
     # 创建新的视频剪辑
     new_clip = ImageSequenceClip(new_frames, fps=fps)
     # 保存新的视频
-    new_clip.write_videofile(output_path, fps=fps)
+    new_clip.write_videofile(output_path,fps=fps, threads=12,
+            codec='libx264',ffmpeg_params=['-loglevel', 'quiet'])
 
 
 if __name__ == "__main__":
-    input_video_path = "input.mp4"
+    input_video_path = "input1.mp4"
     output_video_path = "output.mp4"
     process_video(input_video_path, output_video_path)
     
