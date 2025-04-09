@@ -1,14 +1,7 @@
 from moviepy import VideoFileClip, VideoClip
 import numpy as np
-import os
-from contextlib import redirect_stdout
-
-# 禁用 Python 标准输出（针对 print 语句）
-def suppress_output(func):
-    def wrapper(*args, **kwargs):
-        with open(os.devnull, 'w') as f, redirect_stdout(f):
-            return func(*args, **kwargs)
-    return wrapper
+from logutil import suppress_output
+import time
 
 def process_frame_with_context(clip, t):
     fps = clip.fps
@@ -55,7 +48,7 @@ def process_video(input_video_path, output_video_path):
         new_clip.fps = clip.fps
 
         # 逐帧写入新视频，添加 ffmpeg_params 参数
-        new_clip.write_videofile(output_video_path, fps=clip.fps, threads=4, codec='libx264',
+        new_clip.write_videofile(output_video_path, fps=clip.fps, threads=12, codec='libx264',
                                  ffmpeg_params=['-loglevel', 'quiet'])
 
         # 关闭视频剪辑对象
@@ -67,8 +60,13 @@ def process_video(input_video_path, output_video_path):
 
 
 if __name__ == "__main__":
-    for i in range(1, 3):
+    s = time.time()
+    print(f"开始处理视频...{s}")
+    for i in range(1, 4):
+        s1 = time.time()
         input_video_path = f'input{i}.mp4'
         output_video_path = f'output{i}.mp4'
         process_video(input_video_path, output_video_path)
-    
+        print(f"已处理视频 {i}...耗时 {time.time() - s1:.2f} 秒")
+        
+    print(f"视频处理完成...总耗时 {time.time() - s:.2f} 秒")
