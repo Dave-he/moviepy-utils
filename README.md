@@ -13,3 +13,4 @@ video_processing_frame.py 将视频将视频9帧拼接为一帧
 
 video_merge.py 同目录下的视频拼接（按文件名排序）
 video_transcode.py 视频转码
+video_clip.py 视频裁剪
